@@ -11,6 +11,7 @@
 #include "DepthCamera.h"
 #include "DepthCameraException.h"
 
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Application
@@ -68,12 +69,22 @@ void Application::processFrame()
 		 }
 	}
 
+	if(contours.size() == 0){
+		//Clear drawed image
+		cv::rectangle(m_drawedImage, cv::Point(0, 0), cv::Point(640, 480),
+				  cv::Scalar::all(0), CV_FILLED);
+
+		//Clear touchPoints
+
+	}
+
 	for (  size_t i = 0; i < contours.size(); i++ ){
 		double contourSize = contourArea(contours.at(i));
 		if(contourSize > 40){
 			cv::RotatedRect rect = cv::fitEllipse(contours.at(i));
 			cv::ellipse(m_outputImage, rect, 255, 5);
 			cv::circle(m_drawedImage, rect.center, 10, 255, 20);
+			touchPoints.push_back(rect.center);
 		}
 	}
 

@@ -69,7 +69,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(OPEN_NI_INCLUDE);$(OPEN_CV_INCLUDE);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\HCI2\Desktop\boost_1_47_0;$(OPEN_NI_INCLUDE);$(OPEN_CV_INCLUDE);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -82,15 +82,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="DataSet.cpp" />
     <ClCompile Include="DepthCamera.cpp" />
     <ClCompile Include="DepthCameraException.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="pendigits.tra" />
     <None Include="SamplesConfig.xml" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="DataSet.h" />
     <ClInclude Include="DepthCamera.h" />
     <ClInclude Include="DepthCameraException.h" />
   </ItemGroup>

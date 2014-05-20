@@ -11,6 +11,7 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <vector>
 
 // Forward declarations
 class DepthCamera;
@@ -51,7 +52,9 @@ class Application
 		cv::Mat m_initialImage;
 		cv::Point m_initialDistance;
 		bool m_initialIsInitialized;
-		int distance;;
+		int distance;
+
+		std::vector<cv::Point> touchPoints;
 
 		bool m_isFinished;
 };
