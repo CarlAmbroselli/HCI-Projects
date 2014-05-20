@@ -75,6 +75,10 @@ void Application::processFrame()
 				  cv::Scalar::all(0), CV_FILLED);
 
 		//Clear touchPoints
+		if(touchPoints.size() > 0){
+			Application::analyse(touchPoints);
+			touchPoints.clear();
+		}
 
 	}
 
@@ -89,6 +93,46 @@ void Application::processFrame()
 	}
 
 	///m_outputImage = m_outImage;
+}
+
+void Application::analyse(std::vector<cv::Point> touchPoints)
+{
+	const int numberOfTouchPoints = 8;
+
+	//Extract 8 touch points
+	cv::Point touches[numberOfTouchPoints];
+	float timeframe = touchPoints.size() / numberOfTouchPoints;
+	cv::Point max = touchPoints.at(0);
+	cv::Point min = touchPoints.at(0);
+	for (int i = 0; i <numberOfTouchPoints; i++){
+		touches[i] = touchPoints.at((int)i*timeframe);
+		if(touches[i].x < min.x) min.x = touches[i].x;
+		if(touches[i].y < min.y) min.y = touches[i].y;
+		if(touches[i].x > max.x) max.x = touches[i].x;
+		if(touches[i].y > max.y) max.y = touches[i].y;
+		//printf("Initial Touch %d : %d@%d\n", i, touches[i].x, touches[i].y);
+	}
+
+	//printf("Max: %d@%d | Min: %d@%d\n", max.x, max.y, min.x, min.y);
+
+	for (int i = 0; i <numberOfTouchPoints; i++){
+
+		if(max.x != min.x) {
+			float result = ((((touches[i].x - min.x)/((float)(max.x-min.x))) * 100));
+			touches[i].x = (int) result; 
+		}
+		else touches[i].x = 0;
+
+		if(max.y != min.y) touches[i].y = (int) 
+			(((touches[i].y - min.y)/(max.y-min.y)) * 100); 
+		else touches[i].y = 0;
+
+		printf("Touch %d : %d@%d\n", i, touches[i].x, touches[i].y);
+	}
+	printf("\n\n");
+
+
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -109,8 +153,8 @@ Application::Application()
 
     // open windows
 	cv::namedWindow("output", 1);
-	cv::namedWindow("depth", 1);
-	cv::namedWindow("raw", 1);
+	//cv::namedWindow("depth", 1);
+	//cv::namedWindow("raw", 1);
 	cv::namedWindow("draw", 1);
 
     // create work buffer
@@ -147,6 +191,10 @@ void Application::loop()
 			clearOutputImage();
 			break;
 
+		case 'r':
+			m_initialIsInitialized = false;
+			break;
+
 		case 'q':
 			m_isFinished = true;
 	}
@@ -158,8 +206,8 @@ void Application::loop()
 	processFrame();
 
 	// Display the images
-	cv::imshow("raw", m_rgbImage);
-	cv::imshow("depth", m_depthImage);
+	//cv::imshow("raw", m_rgbImage);
+	//cv::imshow("depth", m_depthImage);
 	cv::imshow("output", m_outputImage);
 	cv::imshow("draw", m_drawedImage);
 }

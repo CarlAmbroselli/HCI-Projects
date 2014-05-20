@@ -57,6 +57,8 @@ class Application
 		std::vector<cv::Point> touchPoints;
 
 		bool m_isFinished;
+
+		void analyse(std::vector<cv::Point> touchPoints);
 };
 
 #endif // __APPLICATION_H
