@@ -11,6 +11,7 @@
 #include "DepthCamera.h"
 #include "DepthCameraException.h"
 #include <cmath>
+#include "DataSet.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -75,6 +76,10 @@ void Application::processFrame()
 				  cv::Scalar::all(0), CV_FILLED);
 
 		//Clear touchPoints
+		if(touchPoints.size() > 0){
+			Application::analyse(touchPoints);
+			touchPoints.clear();
+		}
 
 	}
 
@@ -98,15 +103,18 @@ int Application::compareToTestData(cv::Point input[], cv::Mat testData){
 
 	for(int i=0; i<testData.rows; i++){
 		scores.push_back(rateLine(input, matToRow(testData.row(i))));
+		printf("Score: %f\n", scores.at(scores.size()-1));
 	}
-	float minIndex = 0;
-	float minValue = scores.at(0);
+	float minIndex = 300;
+	float minValue = scores.at(300);
 	for(int j=0; j<scores.size(); j++){
 		if(scores.at(j) < minValue){
 			minIndex = j;
 			minValue = scores.at(j);
 		}
 	}
+
+	return minIndex;
 }
 
 cv::Point* Application::matToRow(cv::Mat row){
@@ -124,11 +132,58 @@ float Application::rateLine(cv::Point input[], cv::Point data[]){
 		int distanceX = abs(input[i].x-data[i].x);
 		int distanceY = abs(input[i].y-data[i].y);
 
-		float distance = std::sqrt( ((distanceX*distanceX)+(distanceY*distanceY)) );
+		float distance = sqrt( (float) ((distanceX*distanceX)+(distanceY*distanceY)) );
 		score += (distance/100);
 	}
 	return score;
 }
+
+void Application::analyse(std::vector<cv::Point> touchPoints)
+{
+	const int numberOfTouchPoints = 8;
+
+	//Extract 8 touch points
+	cv::Point touches[numberOfTouchPoints];
+	float timeframe = touchPoints.size() / numberOfTouchPoints;
+	cv::Point max = touchPoints.at(0);
+	cv::Point min = touchPoints.at(0);
+	for (int i = 0; i <numberOfTouchPoints; i++){
+		touches[i] = touchPoints.at((int)i*timeframe);
+		if(touches[i].x < min.x) min.x = touches[i].x;
+		if(touches[i].y < min.y) min.y = touches[i].y;
+		if(touches[i].x > max.x) max.x = touches[i].x;
+		if(touches[i].y > max.y) max.y = touches[i].y;
+		//printf("Initial Touch %d : %d@%d\n", i, touches[i].x, touches[i].y);
+	}
+
+	//printf("Max: %d@%d | Min: %d@%d\n", max.x, max.y, min.x, min.y);
+
+	for (int i = 0; i <numberOfTouchPoints; i++){
+
+		if(max.x != min.x) {
+			float result = ((((touches[i].x - min.x)/((float)(max.x-min.x))) * 100));
+			touches[i].x = (int) result; 
+		}
+		else touches[i].x = 0;
+
+		if(max.y != min.y) touches[i].y = (int) 
+			(((touches[i].y - min.y)/(max.y-min.y)) * 100); 
+		else touches[i].y = 0;
+
+		printf("Touch %d : %d@%d\n", i, touches[i].x, touches[i].y);
+	}
+	printf("\n\n");
+
+	cv::Mat data;
+	cv::Mat labels;
+	readDataSet("pendigits.tra", 7494, data, labels);
+	int rowNumber = Application::compareToTestData(touches, data);
+
+	float number = labels.at<float>(rowNumber);
+	printf("Recognized Number: %d", rowNumber);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 Application::Application()
 {
@@ -146,8 +201,8 @@ Application::Application()
 
     // open windows
 	cv::namedWindow("output", 1);
-	cv::namedWindow("depth", 1);
-	cv::namedWindow("raw", 1);
+	//cv::namedWindow("depth", 1);
+	//cv::namedWindow("raw", 1);
 	cv::namedWindow("draw", 1);
 
     // create work buffer
@@ -184,6 +239,10 @@ void Application::loop()
 			clearOutputImage();
 			break;
 
+		case 'r':
+			m_initialIsInitialized = false;
+			break;
+
 		case 'q':
 			m_isFinished = true;
 	}
@@ -195,8 +254,8 @@ void Application::loop()
 	processFrame();
 
 	// Display the images
-	cv::imshow("raw", m_rgbImage);
-	cv::imshow("depth", m_depthImage);
+	//cv::imshow("raw", m_rgbImage);
+	//cv::imshow("depth", m_depthImage);
 	cv::imshow("output", m_outputImage);
 	cv::imshow("draw", m_drawedImage);
 }

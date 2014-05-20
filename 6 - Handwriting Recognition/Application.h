@@ -58,6 +58,7 @@ class Application
 		int distance;
 
 		std::vector<cv::Point> touchPoints;
+		void analyse(std::vector<cv::Point> touchPoints);
 
 		bool m_isFinished;
 };
