@@ -39,6 +39,9 @@ class Application
 
 		void makeScreenshots();
 		void clearOutputImage();
+		float rateLine(cv::Point input[],cv::Point data[]);
+		int compareToTestData(cv::Point input[], cv::Mat testData);
+		cv::Point* matToRow(cv::Mat row);
 
 		bool isFinished();
 
@@ -57,8 +60,6 @@ class Application
 		std::vector<cv::Point> touchPoints;
 
 		bool m_isFinished;
-
-		void analyse(std::vector<cv::Point> touchPoints);
 };
 
 #endif // __APPLICATION_H
