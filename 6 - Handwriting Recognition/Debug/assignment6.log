@@ -1,0 +1,41 @@
+﻿Der Buildvorgang wurde am 20.05.2014 11:52:07 gestartet.
+Projekt "C:\Users\HCI2\Documents\HCI-Projects\6 - Handwriting Recognition\assignment6.vcxproj" auf Knoten "2", build Ziel(e).
+InitializeBuildStatus:
+  "Debug\assignment06.unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Program Files\OpenNI\Include" /IC:\opencv\build\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Application.cpp DepthCamera.cpp DepthCameraException.cpp main.cpp
+  main.cpp
+  DepthCameraException.cpp
+  DepthCamera.cpp
+c:\users\hci2\documents\hci-projects\6 - handwriting recognition\depthcamera.cpp(29): warning C4996: 'xn::Context::InitFromXmlFile': Use other overload!
+          c:\program files\openni\include\xncppwrapper.h(5576): Siehe Deklaration von 'xn::Context::InitFromXmlFile'
+c:\users\hci2\documents\hci-projects\6 - handwriting recognition\depthcamera.cpp(67): warning C4996: 'xn::Context::Shutdown': You may use Release() instead, or count on dtor
+          c:\program files\openni\include\xncppwrapper.h(5706): Siehe Deklaration von 'xn::Context::Shutdown'
+  Application.cpp
+  Code wird generiert...
+ManifestResourceCompile:
+  C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"Debug\assignment06.exe.embed.manifest.res" Debug\assignment06_manifest.rc 
+Link:
+  C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\HCI2\Documents\HCI-Projects\6 - Handwriting Recognition\Debug\assignment06.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files\OpenNI\Lib" /LIBPATH:C:\opencv\build\x86\vc10\lib OpenNI.lib opencv_core231d.lib opencv_imgproc231d.lib opencv_highgui231d.lib opencv_video231d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\assignment06.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\HCI2\Documents\HCI-Projects\6 - Handwriting Recognition\Debug\assignment06.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\HCI2\Documents\HCI-Projects\6 - Handwriting Recognition\Debug\assignment06.lib" /MACHINE:X86 Debug\assignment06.exe.embed.manifest.res
+  Debug\Application.obj
+  Debug\DepthCamera.obj
+  Debug\DepthCameraException.obj
+  Debug\main.obj
+Manifest:
+  C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\assignment06.exe.embed.manifest" /manifest Debug\assignment06.exe.intermediate.manifest
+  C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"Debug\assignment06.exe.embed.manifest.res" Debug\assignment06_manifest.rc 
+LinkEmbedManifest:
+  C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\HCI2\Documents\HCI-Projects\6 - Handwriting Recognition\Debug\assignment06.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files\OpenNI\Lib" /LIBPATH:C:\opencv\build\x86\vc10\lib OpenNI.lib opencv_core231d.lib opencv_imgproc231d.lib opencv_highgui231d.lib opencv_video231d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\assignment06.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\HCI2\Documents\HCI-Projects\6 - Handwriting Recognition\Debug\assignment06.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\HCI2\Documents\HCI-Projects\6 - Handwriting Recognition\Debug\assignment06.lib" /MACHINE:X86 Debug\assignment06.exe.embed.manifest.res
+  Debug\Application.obj
+  Debug\DepthCamera.obj
+  Debug\DepthCameraException.obj
+  Debug\main.obj
+  assignment6.vcxproj -> C:\Users\HCI2\Documents\HCI-Projects\6 - Handwriting Recognition\Debug\assignment06.exe
+FinalizeBuildStatus:
+  Die Datei "Debug\assignment06.unsuccessfulbuild" wird gelöscht.
+  Aktualisieren des Timestamps von "Debug\assignment06.lastbuildstate".
+Die Erstellung des Projekts "C:\Users\HCI2\Documents\HCI-Projects\6 - Handwriting Recognition\assignment6.vcxproj" ist abgeschlossen, build Ziel(e).
+
+Das Erstellen war erfolgreich.
+
+Verstrichene Zeit 00:00:05.19
