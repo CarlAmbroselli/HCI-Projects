@@ -58,8 +58,9 @@ void readDataSet(std::string fileName, int numberOfRows, cv::Mat &data, cv::Mat 
 		Tokenizer tokenizer(currentLine, separators);
 		tokens.assign(tokenizer.begin(), tokenizer.end());
 
-		for (int i = 0; i < 16; i++)
+		for (int i = 0; i < 16; i++){
 			data.at<float>(row, i) = stringToFloat(tokens[i]) / 100.0f;
+		}
 
 		labels.at<float>(row) = stringToFloat(tokens[16]);
 		row++;

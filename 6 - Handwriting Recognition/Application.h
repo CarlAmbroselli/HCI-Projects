@@ -25,6 +25,11 @@ class DepthCamera;
 class Application
 {
 	public:
+		struct PointScore
+		{
+			float score;
+			float value;
+		};
 		Application();
 		~Application();
 
@@ -39,11 +44,13 @@ class Application
 
 		void makeScreenshots();
 		void clearOutputImage();
-		float rateLine(cv::Point input[],cv::Point data[]);
-		int compareToTestData(cv::Point input[], cv::Mat testData);
-		cv::Point* matToRow(cv::Mat row);
+		float rateLine(cv::Point input[], cv::Mat testData, int rowNumber);
+		int compareToTestData(cv::Point input[], cv::Mat testData, cv::Mat labels);
+		cv::Point* matToRow(cv::Mat row, int rowNumber, cv::Point* rowArr);
 
 		bool isFinished();
+		// Sort Container by name function
+		bool sortByScore(const PointScore &lhs, const PointScore &rhs) { return lhs.score < rhs.score; };
 
 	protected:
 		DepthCamera *m_depthCamera;
@@ -61,6 +68,8 @@ class Application
 		void analyse(std::vector<cv::Point> touchPoints);
 
 		bool m_isFinished;
+
+		
 };
 
 #endif // __APPLICATION_H

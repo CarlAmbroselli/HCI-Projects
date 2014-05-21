@@ -12,6 +12,8 @@
 #include "DepthCameraException.h"
 #include <cmath>
 #include "DataSet.h"
+#include <algorithm>
+#include <vector>
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -88,7 +90,7 @@ void Application::processFrame()
 		if(contourSize > 40){
 			cv::RotatedRect rect = cv::fitEllipse(contours.at(i));
 			cv::ellipse(m_outputImage, rect, 255, 5);
-			cv::circle(m_drawedImage, rect.center, 10, 255, 20);
+			cv::circle(m_drawedImage, rect.center, 5, 255, 10);
 			touchPoints.push_back(rect.center);
 		}
 	}
@@ -98,43 +100,60 @@ void Application::processFrame()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-int Application::compareToTestData(cv::Point input[], cv::Mat testData){
+
+int Application::compareToTestData(cv::Point input[], cv::Mat testData, cv::Mat labels){
 	std::vector<float> scores;
+	cv::Point* pointRow;
+
+	cv::Point rowArr[8];
 
 	for(int i=0; i<testData.rows; i++){
-		scores.push_back(rateLine(input, matToRow(testData.row(i))));
-		printf("Score: %f\n", scores.at(scores.size()-1));
+		scores.push_back(rateLine(input, testData, i));
+		if(i % 500 == 0)  printf("Score: %f\n", scores.at(scores.size()-1));
 	}
 	float minIndex = 300;
 	float minValue = scores.at(300);
+	std::vector<PointScore> scoreCon(7494);
 	for(int j=0; j<scores.size(); j++){
 		if(scores.at(j) < minValue){
 			minIndex = j;
 			minValue = scores.at(j);
 		}
+		scoreCon[j].score = scores.at(j);
+		scoreCon[j].value = labels.at<float>(j);
+	}
+	//std::sort(scoreCon.begin(), scoreCon.end(), sortByScore);
+	for (int j=0; j<scoreCon.size(); j++){
+		printf("Score: %f, VAlue: %f", scoreCon.at(j).score, scoreCon.at(j).value);
 	}
 
 	return minIndex;
 }
 
-cv::Point* Application::matToRow(cv::Mat row){
-	cv::Point rowArr[8];
+cv::Point* Application::matToRow(cv::Mat row, int rowNumber, cv::Point* rowArr){
+	int j = 0;
 	for(int i=0; i<8; i++){
-		rowArr[i].x = row.at<int>(0,i);
-		rowArr[i].y = row.at<int>(0,i);
+		rowArr[i].x = (int) 100 * row.at<float>(rowNumber, j);
+		j++;
+		rowArr[i].y = (int) 100 * row.at<float>(rowNumber, j);
+		j++;
 	}
 	return rowArr;
 }
 
-float Application::rateLine(cv::Point input[], cv::Point data[]){
+float Application::rateLine(cv::Point input[], cv::Mat testData, int rowNumber){
 	float score = 0;
+	int j = 0;
+	float distance = 0;
 	for(int i=0; i<8; i++){
-		int distanceX = abs(input[i].x-data[i].x);
-		int distanceY = abs(input[i].y-data[i].y);
-
-		float distance = sqrt( (float) ((distanceX*distanceX)+(distanceY*distanceY)) );
-		score += (distance/100);
+		int distanceX = abs(input[i].x - testData.at<float>(rowNumber, j));
+		j++;
+		int distanceY = abs(input[i].y - testData.at<float>(rowNumber, j));
+		j++;
+		distance += (float) ((distanceX*distanceX)+(distanceY*distanceY));
 	}
+
+	score = sqrt((float) distance);
 	return score;
 }
 
@@ -153,12 +172,12 @@ void Application::analyse(std::vector<cv::Point> touchPoints)
 		if(touches[i].y < min.y) min.y = touches[i].y;
 		if(touches[i].x > max.x) max.x = touches[i].x;
 		if(touches[i].y > max.y) max.y = touches[i].y;
-		//printf("Initial Touch %d : %d@%d\n", i, touches[i].x, touches[i].y);
+		printf("Initial Touch %d : %d@%d\n", i, touches[i].x, touches[i].y);
 	}
 
-	//printf("Max: %d@%d | Min: %d@%d\n", max.x, max.y, min.x, min.y);
+	printf("Max: %d@%d | Min: %d@%d\n", max.x, max.y, min.x, min.y);
 
-	for (int i = 0; i <numberOfTouchPoints; i++){
+	for (int i = 0; i < numberOfTouchPoints; i++){
 
 		if(max.x != min.x) {
 			float result = ((((touches[i].x - min.x)/((float)(max.x-min.x))) * 100));
@@ -166,8 +185,8 @@ void Application::analyse(std::vector<cv::Point> touchPoints)
 		}
 		else touches[i].x = 0;
 
-		if(max.y != min.y) touches[i].y = (int) 
-			(((touches[i].y - min.y)/(max.y-min.y)) * 100); 
+		if(max.y != min.y)
+			touches[i].y = ((((touches[i].y - min.y)/((float)(max.y-min.y))) * 100));
 		else touches[i].y = 0;
 
 		printf("Touch %d : %d@%d\n", i, touches[i].x, touches[i].y);
@@ -177,10 +196,11 @@ void Application::analyse(std::vector<cv::Point> touchPoints)
 	cv::Mat data;
 	cv::Mat labels;
 	readDataSet("pendigits.tra", 7494, data, labels);
-	int rowNumber = Application::compareToTestData(touches, data);
+
+	int rowNumber = Application::compareToTestData(touches, data, labels);
 
 	float number = labels.at<float>(rowNumber);
-	printf("Recognized Number: %d", rowNumber);
+	printf("Recognized Number: %d", number);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
