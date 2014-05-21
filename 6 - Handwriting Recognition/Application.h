@@ -61,7 +61,9 @@ class Application
 		cv::Mat m_drawedImage;
 		cv::Mat m_initialImage;
 		cv::Point m_initialDistance;
+		cv::Point last_point;
 		bool m_initialIsInitialized;
+		int lastNumber;
 		int distance;
 
 		std::vector<cv::Point> touchPoints;

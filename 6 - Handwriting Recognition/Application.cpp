@@ -14,7 +14,7 @@
 #include "DataSet.h"
 #include <algorithm>
 #include <vector>
-
+#include <sstream>
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Application
@@ -87,12 +87,37 @@ void Application::processFrame()
 
 	for (  size_t i = 0; i < contours.size(); i++ ){
 		double contourSize = contourArea(contours.at(i));
-		if(contourSize > 40){
+		if(contourSize > 800){
 			cv::RotatedRect rect = cv::fitEllipse(contours.at(i));
-			cv::ellipse(m_outputImage, rect, 255, 5);
+			cv::circle(m_rgbImage, rect.center, 5, 255, 10);
 			cv::circle(m_drawedImage, rect.center, 5, 255, 10);
 			touchPoints.push_back(rect.center);
+			if(last_point.x != 0 && last_point.y != 0){
+				cv::line(m_drawedImage, last_point, rect.center, 255, 15);
+			}
+			last_point = rect.center;
+			break;
 		}
+	}
+
+	
+	for (  size_t i = 0; i < touchPoints.size(); i++ ){
+		cv::circle(m_rgbImage, touchPoints.at(i),  5, cv::Scalar( 255, 255, 255 ) , 10);
+		if(i>0){
+			cv::line(m_rgbImage, touchPoints.at(i-1), touchPoints.at(i), cv::Scalar( 255, 255, 255 ), 15);
+		}
+	}
+
+	std::string output = std::string("Last number: ");
+	std::stringstream out;
+	out << lastNumber;
+	output = output + out.str();
+
+	if(lastNumber > -1){
+		cv::putText(m_rgbImage, output, cv::Point(10,50), CV_FONT_HERSHEY_SIMPLEX, 2, cv::Scalar( 255, 255, 255 ), 2);
+	} else {
+		
+		cv::putText(m_rgbImage, "Start writing!", cv::Point(10,50), CV_FONT_HERSHEY_SIMPLEX, 2, cv::Scalar( 255, 255, 255 ), 2);
 	}
 
 	///m_outputImage = m_outImage;
@@ -107,9 +132,10 @@ int Application::compareToTestData(cv::Point input[], cv::Mat testData, cv::Mat 
 
 	cv::Point rowArr[8];
 
+	printf("Number of Rows: %d\n", testData.rows);
 	for(int i=0; i<testData.rows; i++){
 		scores.push_back(rateLine(input, testData, i));
-		if(i % 500 == 0)  printf("Score: %f\n", scores.at(scores.size()-1));
+		if(i % 500 == 0)  printf("Score %d: %f\n", i, scores.at(scores.size()-1));
 	}
 	float minIndex = 300;
 	float minValue = scores.at(300);
@@ -123,9 +149,9 @@ int Application::compareToTestData(cv::Point input[], cv::Mat testData, cv::Mat 
 		scoreCon[j].value = labels.at<float>(j);
 	}
 	//std::sort(scoreCon.begin(), scoreCon.end(), sortByScore);
-	for (int j=0; j<scoreCon.size(); j++){
+	/*for (int j=0; j<scoreCon.size(); j++){
 		printf("Score: %f, VAlue: %f", scoreCon.at(j).score, scoreCon.at(j).value);
-	}
+	}*/
 
 	return minIndex;
 }
@@ -146,9 +172,12 @@ float Application::rateLine(cv::Point input[], cv::Mat testData, int rowNumber){
 	int j = 0;
 	float distance = 0;
 	for(int i=0; i<8; i++){
-		int distanceX = abs(input[i].x - testData.at<float>(rowNumber, j));
+		if(rowNumber % 500 == 0){
+			printf("Testdate for row %d = %f|%f\n", rowNumber,  testData.at<float>(rowNumber, j)*100,  testData.at<float>(rowNumber, j+1)*100);
+		}
+		int distanceX = abs(input[i].x - testData.at<float>(rowNumber, j)*100);
 		j++;
-		int distanceY = abs(input[i].y - testData.at<float>(rowNumber, j));
+		int distanceY = abs(input[i].y - testData.at<float>(rowNumber, j)*100);
 		j++;
 		distance += (float) ((distanceX*distanceX)+(distanceY*distanceY));
 	}
@@ -199,8 +228,17 @@ void Application::analyse(std::vector<cv::Point> touchPoints)
 
 	int rowNumber = Application::compareToTestData(touches, data, labels);
 
+	printf("##### Final Matrix\n\n\n");
+
+	int j = 0;
+	for(int i=0; i<8; i++){
+			printf("Data for row %d = %f|%f\n", rowNumber,  data.at<float>(rowNumber, j)*100,  data.at<float>(rowNumber, j+1)*100);
+			j++; j++;
+	}
+
 	float number = labels.at<float>(rowNumber);
-	printf("Recognized Number: %d", number);
+	printf("Recognized Number: %f", number);
+	lastNumber = number;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -220,10 +258,10 @@ Application::Application()
 	}
 
     // open windows
-	cv::namedWindow("output", 1);
+	//cv::namedWindow("output", 1);
 	//cv::namedWindow("depth", 1);
-	//cv::namedWindow("raw", 1);
-	cv::namedWindow("draw", 1);
+	cv::namedWindow("raw", 1);
+	//cv::namedWindow("draw", 1);
 
     // create work buffer
 	m_rgbImage = cv::Mat(480, 640, CV_8UC3);
@@ -232,6 +270,8 @@ Application::Application()
 	m_outputImage = cv::Mat(480, 640, CV_8UC1);
 	m_drawedImage = cv::Mat(480, 640, CV_8UC1);
 	m_initialIsInitialized = false;
+	last_point = cv::Point(0,0);
+	lastNumber = -1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -274,10 +314,10 @@ void Application::loop()
 	processFrame();
 
 	// Display the images
-	//cv::imshow("raw", m_rgbImage);
+	cv::imshow("raw", m_rgbImage);
 	//cv::imshow("depth", m_depthImage);
-	cv::imshow("output", m_outputImage);
-	cv::imshow("draw", m_drawedImage);
+	//cv::imshow("output", m_outputImage);
+	//cv::imshow("draw", m_drawedImage);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
