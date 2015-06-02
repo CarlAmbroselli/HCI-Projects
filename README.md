@@ -1,4 +1,4 @@
-# HCI-Projects
+# Handwriting Recognition
 
 This repository contains the source code for an handwriting recognition system build with Microsoft Kinect. 
 It is written as a C++ Application that detects digits written on a table or floor that is monitored with a kinect camera.
